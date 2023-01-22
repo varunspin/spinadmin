@@ -135,6 +135,10 @@ This section has moved here:
 - After install, import the minified CSS file in your app's entry file:
 - import 'semantic-ui-css/semantic.min.css'
 
+# -- latest branch
+
+- varun/dev
+
 # --- ERROR CODE USED
 
 - E00001
