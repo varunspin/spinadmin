@@ -74,14 +74,15 @@ export default function CSVReader() {
 				dealer_id: dealerId,
 				vehicles: newCustomerInfoTableData,
 			};
-			console.log('uploadCustomerInfoReqBody-', { reqBody });
-			const uploadCustomerInfoRes = await axios.post(
+			// console.log('uploadCustomerInfoReqBody-', { reqBody });
+			// const uploadCustomerInfoRes =
+			await axios.post(
 				`${process.env.REACT_APP_API_BASE_URL}/uploadCustomerInfo`,
 				reqBody
 			);
-			console.log('uploadCustomerInfoRes-', {
-				uploadCustomerInfoRes: uploadCustomerInfoRes?.data,
-			});
+			// console.log('uploadCustomerInfoRes-', {
+			// 	uploadCustomerInfoRes: uploadCustomerInfoRes?.data,
+			// });
 			// setParseJson(results?.data);
 			setCustomerInfoTableData(newCustomerInfoTableData);
 
@@ -89,9 +90,7 @@ export default function CSVReader() {
 			removeAlertsAfterDelay();
 		} catch (error) {
 			console.error('E00001', error);
-			setAlertErrorMessage(
-				'Invalid file, Please refer sample CSV and upload again'
-			);
+			setAlertErrorMessage('Server down, Try after sometimes');
 			setTimeout(() => {
 				setAlertErrorMessage('');
 			}, 4000);
@@ -118,6 +117,15 @@ export default function CSVReader() {
 			<CSVReader
 				onUploadAccepted={results => {
 					uploadCustomerInfo(results);
+				}}
+				onUploadRejected={error => {
+					console.error('E00002', error);
+					setAlertErrorMessage(
+						'Invalid file, Please refer sample CSV and upload again'
+					);
+					setTimeout(() => {
+						setAlertErrorMessage('');
+					}, 4000);
 				}}>
 				{({ getRootProps, acceptedFile, ProgressBar, getRemoveFileProps }) => {
 					const removeProps = getRemoveFileProps();

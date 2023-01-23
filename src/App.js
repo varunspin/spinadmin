@@ -1,7 +1,7 @@
-import Buttons from 'Pages/Examples/Buttons';
+import Buttons from 'pages/Examples/Buttons';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
-import CsvUpload from 'Components/CsvUpload';
-import PageNotFound from 'Pages/404';
+import CsvUpload from 'components/CsvUpload';
+import PageNotFound from 'pages/404';
 import './App.css';
 
 function App(props) {
