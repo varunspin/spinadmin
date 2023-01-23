@@ -75,22 +75,29 @@ export default function CSVReader() {
 				vehicles: newCustomerInfoTableData,
 			};
 			// console.log('uploadCustomerInfoReqBody-', { reqBody });
-			// const uploadCustomerInfoRes =
-			await axios.post(
-				`${process.env.REACT_APP_API_BASE_URL}/uploadCustomerInfo`,
-				reqBody
-			);
-			// console.log('uploadCustomerInfoRes-', {
-			// 	uploadCustomerInfoRes: uploadCustomerInfoRes?.data,
-			// });
+			try {
+				// const uploadCustomerInfoRes =
+				await axios.post(
+					`${process.env.REACT_APP_API_BASE_URL}/uploadCustomerInfo`,
+					reqBody
+				);
+				setCustomerInfoTableData(newCustomerInfoTableData);
+				setAlertSuccessMessage('Customer Information Uploaded Successfully');
+				removeAlertsAfterDelay();
+			} catch (error) {
+				console.error('E00003', error);
+				setAlertErrorMessage('Server down, Try after sometimes');
+				removeAlertsAfterDelay();
+				// console.log('uploadCustomerInfoRes-', {
+				// 	uploadCustomerInfoRes: uploadCustomerInfoRes?.data,
+				// });
+			}
 			// setParseJson(results?.data);
-			setCustomerInfoTableData(newCustomerInfoTableData);
-
-			setAlertSuccessMessage('Customer Information Uploaded Successfully');
-			removeAlertsAfterDelay();
 		} catch (error) {
 			console.error('E00001', error);
-			setAlertErrorMessage('Server down, Try after sometimes');
+			setAlertErrorMessage(
+				'Invalid file, Please refer sample CSV and upload again'
+			);
 			setTimeout(() => {
 				setAlertErrorMessage('');
 			}, 4000);
