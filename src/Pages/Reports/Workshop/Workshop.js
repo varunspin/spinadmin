@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Checkbox, Collapse } from 'antd';
+import { Table, Checkbox, Collapse, DatePicker, Divider } from 'antd';
 import { FileExcelOutlined } from '@ant-design/icons';
 import { CSVLink } from 'react-csv';
 import axios from 'axios';
 import moment from 'moment';
+import queryString from 'query-string';
 
 import { getRandomNumber } from 'util/helper';
 
 import * as CONST from './const';
+const { RangePicker } = DatePicker;
 
 const Workshop = () => {
 	const [visibleColumnsList, setVisibleColumnsList] = useState(
@@ -15,18 +17,22 @@ const Workshop = () => {
 	);
 	const [tableData, setTableData] = useState([]);
 	const [fetchingWorkshopReport, setFetchingWorkshopReport] = useState(false);
+	const [dealerId, setDealerId] = useState('4');
+	const [fromDate, setFromDate] = useState(moment().subtract('2000', 'days'));
+	const [toDate, setToDate] = useState(moment());
 
 	const fetchWorkshopReport = async () => {
 		try {
 			setFetchingWorkshopReport(true);
 			const workshopReportData = await axios.get(
-				`${process.env.REACT_APP_API_BASE_URL}/analyticsworkshopdaily?dealer_id=4&from_date=01-01-2019&to_date=01-01-2024`
+				`${process.env.REACT_APP_API_BASE_URL}/analyticsworkshopdaily?dealer_id=${dealerId}&from_date=${fromDate}&to_date=${toDate}`
 			);
 			console.log('workshopReportData-', { workshopReportData });
 			const newTableData = [];
 			workshopReportData?.data?.data?.forEach(record => {
 				if (record?.date) {
 					newTableData.push({
+						key: record?.txn_id,
 						date: moment(record?.date).format('DD-MM-YYYY'),
 						inflow: record?.inflow || 0,
 						outflow: record?.outflow || 0,
@@ -42,8 +48,17 @@ const Workshop = () => {
 	};
 
 	useEffect(() => {
+		const parse = queryString.parse(window.location.search);
+		const newDealerId = parse?.dealer_id?.trim();
+		if (newDealerId) {
+			// console.log('selected-dealer-id=', newDealerId);
+			setDealerId(newDealerId);
+		} else {
+			window.open('/', '_self');
+		}
 		fetchWorkshopReport();
-	}, []);
+		// eslint-disable-next-line
+	}, [fromDate, toDate]);
 
 	const columnsOptions = CONST.columns.map(({ dataIndex, title }) => ({
 		label: title,
@@ -75,7 +90,7 @@ const Workshop = () => {
 			key: '1',
 			label: (
 				<div style={{ display: 'flex', justifyContent: 'space-between' }}>
-					<span>Filter Columns</span>
+					<span>Filters</span>
 					<div onClick={e => {}}>
 						<CSVLink
 							data={filterData}
@@ -87,6 +102,17 @@ const Workshop = () => {
 			),
 			children: (
 				<div style={{ textAlign: 'left' }}>
+					<RangePicker
+						defaultValue={[fromDate, toDate]}
+						onChange={selectedDate => {
+							console.log('onchange-range-', selectedDate);
+							if (selectedDate?.length === 2) {
+								setFromDate(selectedDate?.[0]);
+								setToDate(selectedDate?.[1]);
+							}
+						}}
+					/>
+					<Divider />
 					<Checkbox.Group
 						value={visibleColumnsList}
 						options={columnsOptions}
