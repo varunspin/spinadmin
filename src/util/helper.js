@@ -3,6 +3,8 @@ import moment from 'moment';
 
 export const sleep = m => new Promise(r => setTimeout(r, m));
 
+export const getRandomNumber = () => Math.floor(new Date().getTime());
+
 export const asyncForEach = async (array, callback) => {
 	for (let index = 0; index < array.length; index++) {
 		await callback(array[index], index, array);

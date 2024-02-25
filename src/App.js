@@ -2,6 +2,7 @@ import Buttons from 'pages/Examples/Buttons';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import CsvUpload from 'components/CsvUpload';
 import Cashier from 'components/Cashier';
+import Reports from 'pages/Reports';
 import PageNotFound from 'pages/404';
 import './App.css';
 
@@ -13,6 +14,7 @@ function App(props) {
 					{/* <Route path='/' element={<PageNotFound />}> */}
 					<Route path='/upload-customer-info' element={<CsvUpload />} />
 					<Route path='/cashier' element={<Cashier />} />
+					<Route path='/reports' element={<Reports />} />
 					<Route path='/examples/buttons' element={<Buttons />} />
 					<Route index element={<PageNotFound />} />
 					<Route path='*' element={<PageNotFound />} />
