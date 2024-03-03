@@ -9,6 +9,8 @@ import queryString from 'query-string';
 import { getRandomNumber } from 'util/helper';
 
 import * as CONST from './const';
+import './Workshop.scss';
+
 const { RangePicker } = DatePicker;
 
 const Workshop = () => {
@@ -17,8 +19,8 @@ const Workshop = () => {
 	);
 	const [tableData, setTableData] = useState([]);
 	const [fetchingWorkshopReport, setFetchingWorkshopReport] = useState(false);
-	const [dealerId, setDealerId] = useState('4');
-	const [fromDate, setFromDate] = useState(moment().subtract('2000', 'days'));
+	const [dealerId, setDealerId] = useState('');
+	const [fromDate, setFromDate] = useState(moment().subtract('15', 'days'));
 	const [toDate, setToDate] = useState(moment());
 
 	const fetchWorkshopReport = async () => {
@@ -27,15 +29,15 @@ const Workshop = () => {
 			const workshopReportData = await axios.get(
 				`${process.env.REACT_APP_API_BASE_URL}/analyticsworkshopdaily?dealer_id=${dealerId}&from_date=${fromDate}&to_date=${toDate}`
 			);
-			console.log('workshopReportData-', { workshopReportData });
+			// console.log('workshopReportData-', { workshopReportData });
 			const newTableData = [];
-			workshopReportData?.data?.data?.forEach(record => {
+			workshopReportData?.data?.data?.forEach((record, record_index) => {
 				if (record?.date) {
 					newTableData.push({
 						key: record?.txn_id,
+						sr_no: record_index + 1,
+						...record,
 						date: moment(record?.date).format('DD-MM-YYYY'),
-						inflow: record?.inflow || 0,
-						outflow: record?.outflow || 0,
 					});
 				}
 			});
@@ -48,6 +50,13 @@ const Workshop = () => {
 	};
 
 	useEffect(() => {
+		if ((dealerId && fromDate, toDate)) {
+			fetchWorkshopReport();
+		}
+		// eslint-disable-next-line
+	}, [dealerId, fromDate, toDate]);
+
+	useEffect(() => {
 		const parse = queryString.parse(window.location.search);
 		const newDealerId = parse?.dealer_id?.trim();
 		if (newDealerId) {
@@ -56,9 +65,8 @@ const Workshop = () => {
 		} else {
 			window.open('/', '_self');
 		}
-		fetchWorkshopReport();
 		// eslint-disable-next-line
-	}, [fromDate, toDate]);
+	}, []);
 
 	const columnsOptions = CONST.columns.map(({ dataIndex, title }) => ({
 		label: title,
@@ -105,7 +113,7 @@ const Workshop = () => {
 					<RangePicker
 						defaultValue={[fromDate, toDate]}
 						onChange={selectedDate => {
-							console.log('onchange-range-', selectedDate);
+							// console.log('onchange-range-', selectedDate);
 							if (selectedDate?.length === 2) {
 								setFromDate(selectedDate?.[0]);
 								setToDate(selectedDate?.[1]);
@@ -124,9 +132,9 @@ const Workshop = () => {
 			),
 		},
 	];
-	console.log('tableData-', { tableData, filterData });
+	// console.log('tableData-', { tableData, filterData });
 	return (
-		<div>
+		<div className='ReportsWorkshop'>
 			<Collapse items={items} />
 			<Table
 				{...tableProps}

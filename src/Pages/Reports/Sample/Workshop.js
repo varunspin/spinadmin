@@ -100,7 +100,7 @@ const Workshop = () => {
 						value={visibleColumnsList}
 						options={columnsOptions}
 						onChange={value => {
-							console.log('onchange-', { defaultVisibleColumnsList, value });
+							// console.log('onchange-', { defaultVisibleColumnsList, value });
 							setVisibleColumnsList(value);
 						}}
 					/>
@@ -108,7 +108,7 @@ const Workshop = () => {
 			),
 		},
 	];
-	console.log('tableData-', { tableData, filterData });
+	// console.log('tableData-', { tableData, filterData });
 	return (
 		<div>
 			<Collapse items={items} />
