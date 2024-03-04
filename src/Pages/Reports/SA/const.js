@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { convertMinutesToDayHoursMinutes } from 'util/helper';
 
 export const columns = [
 	{
@@ -25,18 +26,21 @@ export const columns = [
 		dataIndex: 'tat_ro',
 		sorter: (a, b) => a.tat_ro - b.tat_ro,
 		className: 'tbl_sa_td',
+		render: input => convertMinutesToDayHoursMinutes(input),
 	},
 	{
 		title: 'TAT GIGO',
 		dataIndex: 'tat_gigo',
 		sorter: (a, b) => a.tat_gigo - b.tat_gigo,
 		className: 'tbl_sa_td',
+		render: input => convertMinutesToDayHoursMinutes(input),
 	},
 	{
 		title: 'TAT Delivered',
 		dataIndex: 'tat_delivered',
 		sorter: (a, b) => a.tat_delivered - b.tat_delivered,
 		className: 'tbl_sa_td',
+		render: input => convertMinutesToDayHoursMinutes(input),
 	},
 	{
 		title: 'Cancel',

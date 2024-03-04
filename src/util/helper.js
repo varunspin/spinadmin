@@ -16,6 +16,19 @@ export const maxStr = (str, maxLen) => {
 	return str;
 };
 
+export const convertMinutesToDayHoursMinutes = minutes => {
+	if (!minutes || minutes <= 0) return 0;
+	const duration = moment.duration(minutes, 'minutes');
+	const ans = [];
+	const days = duration.days();
+	const hours = duration.hours();
+	const mins = duration.minutes();
+	if (days) ans.push(days + 'd');
+	if (hours) ans.push(hours + 'h');
+	if (mins) ans.push(mins + 'm');
+	return ans.join(' ');
+};
+
 // TABLE
 export const formatCellImage = cell => (
 	<a href={cell} target='_blank' rel='noopener noreferrer'>
