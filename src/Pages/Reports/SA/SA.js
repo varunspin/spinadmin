@@ -5,6 +5,7 @@ import { CSVLink } from 'react-csv';
 import axios from 'axios';
 import moment from 'moment';
 import queryString from 'query-string';
+import _ from 'lodash';
 
 import { getRandomNumber } from 'util/helper';
 
@@ -22,9 +23,10 @@ const SA = () => {
 	const [dealerId, setDealerId] = useState('');
 	const [fromDate, setFromDate] = useState(moment().subtract('15', 'days'));
 	const [toDate, setToDate] = useState(moment());
-	const [saFilterList, setSaFilterList] = useState([]);
+	// const [saFilterList, setSaFilterList] = useState([]);
 	// const [filters, setFilters] = useState({});
 	const [filterReportData, setFilterReportData] = useState([]);
+	const [tableColumns, setTableColumns] = useState(CONST.columns);
 
 	const fetchSAReport = async () => {
 		try {
@@ -48,9 +50,21 @@ const SA = () => {
 					}
 				}
 			});
+			const newTableColumns = _.cloneDeep(CONST.columns);
+			newTableColumns[newTableColumns.length - 1].filters = newTableColumns.map(
+				col => {
+					if (col.dataIndex === 'sa_name') {
+						col.filters = newSaFilterList.map(sa_name => {
+							return { text: sa_name, value: sa_name };
+						});
+					}
+					return col;
+				}
+			);
 			setTableData(newTableData);
 			setFilterReportData(newTableData);
-			setSaFilterList(newSaFilterList);
+			setTableColumns(newTableColumns);
+			// setSaFilterList(newSaFilterList);
 		} catch (error) {
 			console.error('error-report-sa-', error);
 		} finally {
@@ -77,14 +91,9 @@ const SA = () => {
 		// eslint-disable-next-line
 	}, []);
 
-	const columnsOptions = CONST.columns.map(({ dataIndex, title }) => ({
+	const columnsOptions = tableColumns.map(({ dataIndex, title }) => ({
 		label: title,
 		value: dataIndex,
-	}));
-
-	const tableColumns = CONST.columns.map(item => ({
-		...item,
-		hidden: !visibleColumnsList.includes(item.dataIndex),
 	}));
 
 	const tableProps = {
@@ -95,12 +104,6 @@ const SA = () => {
 			y: 240,
 		},
 	};
-
-	CONST.columns[CONST?.columns?.length - 1].filters = saFilterList.map(
-		sa_name => {
-			return { text: sa_name, value: sa_name };
-		}
-	);
 
 	const items = [
 		{
@@ -147,8 +150,22 @@ const SA = () => {
 					<Checkbox.Group
 						value={visibleColumnsList}
 						options={columnsOptions}
-						onChange={value => {
-							setVisibleColumnsList(value);
+						onChange={newVisibleColumnsList => {
+							const newTableColumns = [];
+							tableColumns.forEach(item => {
+								const newItem = _.cloneDeep(item);
+								newTableColumns.push({
+									...newItem,
+									hidden: !newVisibleColumnsList.includes(item.dataIndex),
+								});
+							});
+							console.log({
+								tableColumns,
+								newTableColumns,
+								newVisibleColumnsList,
+							});
+							setTableColumns(newTableColumns);
+							setVisibleColumnsList(newVisibleColumnsList);
 						}}
 					/>
 				</div>
@@ -159,6 +176,7 @@ const SA = () => {
 	return (
 		<div className='ReportsSA'>
 			<Collapse items={items} />
+			<div style={{ height: 20 }} />
 			<Table
 				{...tableProps}
 				columns={tableColumns}

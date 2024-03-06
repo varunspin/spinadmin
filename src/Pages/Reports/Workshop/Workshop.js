@@ -38,6 +38,12 @@ const Workshop = () => {
 						sr_no: record_index + 1,
 						...record,
 						date: moment(record?.date).format('DD-MM-YYYY'),
+						wip:
+							(record?.inflow || 0) +
+							(record?.carry_forward || 0) -
+							((record?.ready || 0) +
+								(record?.outflow || 0) +
+								(record?.cancel || 0)),
 					});
 				}
 			});
@@ -136,6 +142,7 @@ const Workshop = () => {
 	return (
 		<div className='ReportsWorkshop'>
 			<Collapse items={items} />
+			<div style={{ height: 20 }} />
 			<Table
 				{...tableProps}
 				columns={tableColumns}

@@ -19,15 +19,39 @@ export const columns = [
 		className: 'tbl_sa_td',
 	},
 	{
-		title: 'Outflow',
+		title: 'Delivered',
 		dataIndex: 'outflow',
 		sorter: (a, b) => a.outflow - b.outflow,
 		className: 'tbl_sa_td',
 	},
+	// {
+	// 	title: 'Outflow',
+	// 	dataIndex: 'outflow',
+	// 	sorter: (a, b) => a.outflow - b.outflow,
+	// 	className: 'tbl_sa_td',
+	// },
 	{
-		title: 'Not Delivered',
-		dataIndex: 'not_delivered',
-		sorter: (a, b) => a.not_delivered - b.not_delivered,
+		title: 'Carry Forward',
+		dataIndex: 'carry_forward',
+		sorter: (a, b) => a.carry_forward - b.carry_forward,
+		className: 'tbl_sa_td',
+	},
+	{
+		title: 'WIP',
+		dataIndex: 'wip',
+		sorter: (a, b) => a.wip - b.wip,
+		className: 'tbl_sa_td',
+	},
+	{
+		title: 'Ready',
+		dataIndex: 'ready',
+		sorter: (a, b) => a.ready - b.ready,
+		className: 'tbl_sa_td',
+	},
+	{
+		title: 'Cancel Vehicle',
+		dataIndex: 'cancel',
+		sorter: (a, b) => a.cancel - b.cancel,
 		className: 'tbl_sa_td',
 	},
 ];
