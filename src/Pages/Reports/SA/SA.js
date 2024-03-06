@@ -6,6 +6,7 @@ import axios from 'axios';
 import moment from 'moment';
 import queryString from 'query-string';
 import _ from 'lodash';
+import dayjs from 'dayjs';
 
 import { getRandomNumber } from 'util/helper';
 
@@ -21,16 +22,18 @@ const SA = () => {
 	const [tableData, setTableData] = useState([]);
 	const [fetchingSAReport, setFetchingSAReport] = useState(false);
 	const [dealerId, setDealerId] = useState('');
-	const [fromDate, setFromDate] = useState(moment().subtract('15', 'days'));
-	const [toDate, setToDate] = useState(moment());
-	// const [saFilterList, setSaFilterList] = useState([]);
-	// const [filters, setFilters] = useState({});
+	const [selectedDate, setSelectedDate] = useState([
+		dayjs(moment().subtract('15', 'days')),
+		dayjs(moment()),
+	]);
 	const [filterReportData, setFilterReportData] = useState([]);
 	const [tableColumns, setTableColumns] = useState(CONST.columns);
 
 	const fetchSAReport = async () => {
 		try {
 			setFetchingSAReport(true);
+			const fromDate = dayjs(selectedDate[0]).format('YYYY-MM-DD');
+			const toDate = dayjs(selectedDate[1]).format('YYYY-MM-DD');
 			const saReportData = await axios.get(
 				`${process.env.REACT_APP_API_BASE_URL}/analyticssadaily?dealer_id=${dealerId}&from_date=${fromDate}&to_date=${toDate}`
 			);
@@ -51,20 +54,17 @@ const SA = () => {
 				}
 			});
 			const newTableColumns = _.cloneDeep(CONST.columns);
-			newTableColumns[newTableColumns.length - 1].filters = newTableColumns.map(
-				col => {
-					if (col.dataIndex === 'sa_name') {
-						col.filters = newSaFilterList.map(sa_name => {
-							return { text: sa_name, value: sa_name };
-						});
-					}
-					return col;
+			newTableColumns.map(col => {
+				if (col.dataIndex === 'sa_name') {
+					col.filters = newSaFilterList.map(sa_name => {
+						return { text: sa_name, value: sa_name };
+					});
 				}
-			);
+				return col;
+			});
 			setTableData(newTableData);
 			setFilterReportData(newTableData);
 			setTableColumns(newTableColumns);
-			// setSaFilterList(newSaFilterList);
 		} catch (error) {
 			console.error('error-report-sa-', error);
 		} finally {
@@ -73,11 +73,11 @@ const SA = () => {
 	};
 
 	useEffect(() => {
-		if ((dealerId && fromDate, toDate)) {
+		if (dealerId && selectedDate) {
 			fetchSAReport();
 		}
 		// eslint-disable-next-line
-	}, [dealerId, fromDate, toDate]);
+	}, [dealerId, selectedDate]);
 
 	useEffect(() => {
 		const parse = queryString.parse(window.location.search);
@@ -137,12 +137,13 @@ const SA = () => {
 			children: (
 				<div style={{ textAlign: 'left' }}>
 					<RangePicker
-						defaultValue={[fromDate, toDate]}
-						onChange={selectedDate => {
-							// console.log('onchange-range-', selectedDate);
-							if (selectedDate?.length === 2) {
-								setFromDate(selectedDate?.[0]);
-								setToDate(selectedDate?.[1]);
+						format={'DD-MM-YYYY'}
+						// defaultValue={[fromDate, toDate]}
+						defaultValue={selectedDate}
+						onChange={newSelectedDate => {
+							// console.log('onchange-range-', newSelectedDate);
+							if (newSelectedDate?.length === 2) {
+								setSelectedDate(newSelectedDate);
 							}
 						}}
 					/>

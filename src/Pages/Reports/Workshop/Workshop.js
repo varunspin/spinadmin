@@ -5,6 +5,7 @@ import { CSVLink } from 'react-csv';
 import axios from 'axios';
 import moment from 'moment';
 import queryString from 'query-string';
+import dayjs from 'dayjs';
 
 import { getRandomNumber } from 'util/helper';
 
@@ -20,12 +21,16 @@ const Workshop = () => {
 	const [tableData, setTableData] = useState([]);
 	const [fetchingWorkshopReport, setFetchingWorkshopReport] = useState(false);
 	const [dealerId, setDealerId] = useState('');
-	const [fromDate, setFromDate] = useState(moment().subtract('15', 'days'));
-	const [toDate, setToDate] = useState(moment());
+	const [selectedDate, setSelectedDate] = useState([
+		dayjs(moment().subtract('15', 'days')),
+		dayjs(moment()),
+	]);
 
 	const fetchWorkshopReport = async () => {
 		try {
 			setFetchingWorkshopReport(true);
+			const fromDate = dayjs(selectedDate[0]).format('YYYY-MM-DD');
+			const toDate = dayjs(selectedDate[1]).format('YYYY-MM-DD');
 			const workshopReportData = await axios.get(
 				`${process.env.REACT_APP_API_BASE_URL}/analyticsworkshopdaily?dealer_id=${dealerId}&from_date=${fromDate}&to_date=${toDate}`
 			);
@@ -38,12 +43,10 @@ const Workshop = () => {
 						sr_no: record_index + 1,
 						...record,
 						date: moment(record?.date).format('DD-MM-YYYY'),
-						wip:
+						on_premise:
 							(record?.inflow || 0) +
 							(record?.carry_forward || 0) -
-							((record?.ready || 0) +
-								(record?.outflow || 0) +
-								(record?.cancel || 0)),
+							((record?.outflow || 0) + (record?.cancel || 0)),
 					});
 				}
 			});
@@ -56,11 +59,11 @@ const Workshop = () => {
 	};
 
 	useEffect(() => {
-		if ((dealerId && fromDate, toDate)) {
+		if (dealerId && selectedDate) {
 			fetchWorkshopReport();
 		}
 		// eslint-disable-next-line
-	}, [dealerId, fromDate, toDate]);
+	}, [dealerId, selectedDate]);
 
 	useEffect(() => {
 		const parse = queryString.parse(window.location.search);
@@ -117,12 +120,11 @@ const Workshop = () => {
 			children: (
 				<div style={{ textAlign: 'left' }}>
 					<RangePicker
-						defaultValue={[fromDate, toDate]}
-						onChange={selectedDate => {
+						defaultValue={selectedDate}
+						onChange={newSelectedDate => {
 							// console.log('onchange-range-', selectedDate);
-							if (selectedDate?.length === 2) {
-								setFromDate(selectedDate?.[0]);
-								setToDate(selectedDate?.[1]);
+							if (newSelectedDate?.length === 2) {
+								setSelectedDate(newSelectedDate);
 							}
 						}}
 					/>

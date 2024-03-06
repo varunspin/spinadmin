@@ -31,21 +31,9 @@ export const columns = [
 	// 	className: 'tbl_sa_td',
 	// },
 	{
-		title: 'Carry Forward',
-		dataIndex: 'carry_forward',
-		sorter: (a, b) => a.carry_forward - b.carry_forward,
-		className: 'tbl_sa_td',
-	},
-	{
-		title: 'WIP',
-		dataIndex: 'wip',
-		sorter: (a, b) => a.wip - b.wip,
-		className: 'tbl_sa_td',
-	},
-	{
-		title: 'Ready',
-		dataIndex: 'ready',
-		sorter: (a, b) => a.ready - b.ready,
+		title: 'On Premises',
+		dataIndex: 'on_premise',
+		sorter: (a, b) => a.on_premise - b.on_premise,
 		className: 'tbl_sa_td',
 	},
 	{
