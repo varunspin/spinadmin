@@ -120,6 +120,7 @@ const Workshop = () => {
 			children: (
 				<div style={{ textAlign: 'left' }}>
 					<RangePicker
+						format={'DD-MM-YYYY'}
 						defaultValue={selectedDate}
 						onChange={newSelectedDate => {
 							// console.log('onchange-range-', selectedDate);

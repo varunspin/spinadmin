@@ -43,9 +43,9 @@ const SA = () => {
 			saReportData?.data?.data?.forEach((record, record_index) => {
 				if (record?.date) {
 					newTableData.push({
+						...record,
 						key: record?.txn_id,
 						sr_no: record_index + 1,
-						...record,
 						date: moment(record?.date).format('DD-MM-YYYY'),
 					});
 					if (!newSaFilterList.includes(record.sa_name)) {

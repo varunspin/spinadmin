@@ -56,6 +56,12 @@ export const columns = [
 		render: input => convertMinutesToDayHoursMinutes(input),
 	},
 	{
+		title: 'On Premises',
+		dataIndex: 'on_premises',
+		sorter: (a, b) => a.on_premises - b.on_premises,
+		className: 'tbl_sa_td',
+	},
+	{
 		title: 'Cancel Vehicle',
 		dataIndex: 'cancel',
 		sorter: (a, b) => a.cancel - b.cancel,
